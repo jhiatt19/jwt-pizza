@@ -6,10 +6,10 @@ As part of `Deliverable ⓵ Development deployment: JWT Pizza`, start up the app
 
 | User activity                                       | Frontend component | Backend endpoints | Database SQL |
 | --------------------------------------------------- | ------------------ | ----------------- | ------------ |
-| View home page                                      |                    |                   |              |
-| Register new user<br/>(t@jwt.com, pw: test)         |                    |                   |              |
-| Login new user<br/>(t@jwt.com, pw: test)            |                    |                   |              |
-| Order pizza                                         |                    |                   |              |
+| View home page                                      | home.jsx |     none          |   none       |
+| Register new user<br/>(t@jwt.com, pw: test)         | register.jsx       | [POST] <br> /api/auth  |   `INSERT INTO user (name, email, password) VALUES (?, ?, ?)` <br> `INSERT INTO userRole (userId, role, objectId) VALUES (?, ?, ?)`           |
+| Login new user<br/>(t@jwt.com, pw: test)            |  login.tsx   |   [PUT] <br> /api/auth |  `SELECT * FROM user WHERE email=?` <br> `SELECT * FROM userRole WHERE userId=?` <br> `INSERT INTO auth (token, userId) VALUES (?,?) ON DUPLICATE KEY UPDATE token=token`          |
+| Order pizza                                         |      payment.tsx   | [POST] <br> /api/order  | `INSERT INTO dinerOrder (dinerId, franchiseId, storeId, date) VALUES (?,?,?,now())` <br> `INSERT INTO orderItem (orderId, menuId, description, price) VALUES (?,?,?,?)` <br> `SELECT id FROM ${table} WHERE ${key}=?`             |
 | Verify pizza                                        |                    |                   |              |
 | View profile page                                   |                    |                   |              |
 | View franchise<br/>(as diner)                       |                    |                   |              |
