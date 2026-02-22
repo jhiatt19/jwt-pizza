@@ -10,6 +10,7 @@ import {
   Endpoints,
   OrderResponse,
   JWTPayload,
+  ListUsers,
 } from "./pizzaService";
 
 const pizzaServiceUrl = import.meta.env.VITE_PIZZA_SERVICE_URL;
@@ -102,6 +103,12 @@ class HttpPizzaService implements PizzaService {
     }
     return Promise.resolve(result);
   }
+
+  // async getUsers(): Promise<ListUsers> {
+  //   let result: list[User] = [];
+
+  //   return Promise.resolve(result);
+  // }
 
   async getMenu(): Promise<Menu> {
     return this.callEndpoint("/api/order/menu");
