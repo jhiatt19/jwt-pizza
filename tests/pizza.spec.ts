@@ -19,6 +19,13 @@ async function basicInit(page: Page) {
       password: "admin",
       roles: [{ role: Role.Admin }],
     },
+    "f@jwt.com": {
+      id: "2",
+      name: "Pizza franchisee",
+      email: "f@jwt.com",
+      password: "franchise",
+      roles: [{ role: Role.Franchisee, objectId: 4 }],
+    },
   };
 
   await page.route("*/**/api/auth", async (route) => {
@@ -76,7 +83,7 @@ async function basicInit(page: Page) {
         description: "A garden of delight",
       },
       {
-        id: 2,
+        id: 5,
         title: "Pepperoni",
         image: "pizza2.png",
         price: 0.0042,
@@ -87,6 +94,38 @@ async function basicInit(page: Page) {
     await route.fulfill({ json: menuRes });
   });
 
+  await page.route("*/**/api/franchise/2/(\?.*)?$/", async (route) => {
+    if (route.request().method() === "GET") {
+      const res = [
+        {
+          id: 4,
+          name: "topSpot",
+          admins: [
+            {
+              id: 2,
+              name: "pizza franchisee",
+              email: "f@jwt.com",
+            },
+          ],
+          stores: [],
+        },
+      ];
+      expect(route.request().method()).toBe("GET");
+      await route.fulfill({ json: res });
+    }
+  });
+
+  await page.route("*/**/api/franchise/4/store", async (route) => {
+    if (route.request().method() === "POST") {
+      const res = {
+        id: 1,
+        franchiseId: 4,
+        name: "Lindon",
+      };
+      expect(route.request().method()).toBe("POST");
+      await route.fulfill({ json: res });
+    }
+  });
   await page.route(/\/api\/franchise(\?.*)?$/, async (route) => {
     if (route.request().method() === "GET") {
       const franchiseRes = {
@@ -117,9 +156,9 @@ async function basicInit(page: Page) {
         name: "topSpot",
         admins: [
           {
-            email: "d@jwt.com",
-            id: 3,
-            name: "pizza diner",
+            email: "f@jwt.com",
+            id: 2,
+            name: "pizza franchisee",
           },
         ],
       };
@@ -249,6 +288,7 @@ test("check out views", async ({ page }) => {
 });
 
 test("admin creation", async ({ page }) => {
+  await basicInit(page);
   await page.getByRole("link", { name: "Login" }).click();
   await page.getByRole("textbox", { name: "Email address" }).fill("a@jwt.com");
   await page.getByRole("textbox", { name: "Email address" }).press("Tab");
@@ -265,17 +305,18 @@ test("admin creation", async ({ page }) => {
     .fill("d@jwt.com");
   await page.getByRole("button", { name: "Create" }).click();
   await expect(page.getByRole("table")).toContainText("topSpot");
-  await page
-    .getByRole("row", { name: "topSpot pizza diner Close" })
-    .getByRole("button")
-    .click();
-  await page.getByRole("button", { name: "Close" }).click();
+  // await page
+  //   .getByRole("row", { name: "topSpot pizza diner Close" })
+  //   .getByRole("button")
+  //   .click();
+  // await page.getByRole("button", { name: "Close" }).click();
   await page.getByRole("link", { name: "Logout" }).click();
   await page.getByRole("link", { name: "Login" }).click();
-  await page.getByRole("textbox", { name: "Email address" }).fill("d@jwt.com");
+  await page.getByRole("textbox", { name: "Email address" }).fill("f@jwt.com");
   await page.getByRole("textbox", { name: "Email address" }).press("Tab");
-  await page.getByRole("textbox", { name: "Password" }).fill("diner");
+  await page.getByRole("textbox", { name: "Password" }).fill("franchise");
   await page.getByRole("button", { name: "Login" }).click();
+  await page.getByRole("link", { name: "Pf" }).click();
   await page
     .getByLabel("Global")
     .getByRole("link", { name: "Franchise" })
