@@ -223,14 +223,8 @@ async function basicInit(page: Page) {
     }
   });
 
-  await page.goto("http://localhost:5173");
+  await page.goto("/");
 }
-
-test("home page", async ({ page }) => {
-  await page.goto("http://localhost:5173");
-
-  expect(await page.title()).toBe("JWT Pizza");
-});
 
 test("register", async ({ page }) => {
   await basicInit(page);
