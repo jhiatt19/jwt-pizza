@@ -3,6 +3,12 @@ import { test, expect } from "playwright-test-coverage";
 import { Role, User } from "../src/service/pizzaService";
 
 async function basicInit(page: Page) {
+  interface Store {
+    id: number;
+    name: string;
+    franchiseId: number;
+  }
+  let stores: Store[] = [];
   let loggedInUser: User | undefined;
   const validUsers: Record<string, User> = {
     "d@jwt.com": {
@@ -24,7 +30,7 @@ async function basicInit(page: Page) {
       name: "Pizza franchisee",
       email: "f@jwt.com",
       password: "franchise",
-      roles: [{ role: Role.Franchisee, objectId: 4 }],
+      roles: [{ role: Role.Franchisee, objectId: "4" }],
     },
   };
 
@@ -94,7 +100,7 @@ async function basicInit(page: Page) {
     await route.fulfill({ json: menuRes });
   });
 
-  await page.route("*/**/api/franchise/2/(\?.*)?$/", async (route) => {
+  await page.route("*/**/api/franchise/2", async (route) => {
     if (route.request().method() === "GET") {
       const res = [
         {
@@ -107,7 +113,7 @@ async function basicInit(page: Page) {
               email: "f@jwt.com",
             },
           ],
-          stores: [],
+          stores: stores,
         },
       ];
       expect(route.request().method()).toBe("GET");
@@ -123,9 +129,11 @@ async function basicInit(page: Page) {
         name: "Lindon",
       };
       expect(route.request().method()).toBe("POST");
+      stores.push(res);
       await route.fulfill({ json: res });
     }
   });
+
   await page.route(/\/api\/franchise(\?.*)?$/, async (route) => {
     if (route.request().method() === "GET") {
       const franchiseRes = {
@@ -144,7 +152,7 @@ async function basicInit(page: Page) {
             name: "PizzaCorp",
             stores: [{ id: 7, name: "Spanish Fork" }],
           },
-          { id: 4, name: "topSpot", stores: [] },
+          { id: 4, name: "topSpot", stores: [{ id: 8, name: "Lindon" }] },
         ],
       };
       expect(route.request().method()).toBe("GET");
@@ -329,7 +337,7 @@ test("admin creation", async ({ page }) => {
   await expect(page.locator("tbody")).toContainText("Lindon");
   await page.getByRole("button", { name: "Close" }).click();
   await expect(page.getByRole("main")).toContainText(
-    "Are you sure you want to close the pizzaTester store Lindon ? This cannot be restored. All outstanding revenue will not be refunded.",
+    "Are you sure you want to close the topSpot store Lindon ? This cannot be restored. All outstanding revenue will not be refunded.",
   );
   await page.getByRole("button", { name: "Close" }).click();
   await page.getByRole("link", { name: "Logout" }).click();
@@ -337,15 +345,14 @@ test("admin creation", async ({ page }) => {
   await page.getByRole("textbox", { name: "Email address" }).fill("a@jwt.com");
   await page.getByRole("textbox", { name: "Email address" }).press("Tab");
   await page.getByRole("textbox", { name: "Password" }).fill("admin");
-  await page.getByRole("textbox", { name: "Password" }).press("Enter");
   await page.getByRole("button", { name: "Login" }).click();
   await page.getByRole("link", { name: "Admin" }).click();
   await page
-    .getByRole("row", { name: "pizzaTester pizza diner Close" })
+    .getByRole("row", { name: "topSpot Close" })
     .getByRole("button")
     .click();
   await expect(page.getByRole("main")).toContainText(
-    "Are you sure you want to close the pizzaTester franchise? This will close all associated stores and cannot be restored. All outstanding revenue will not be refunded.",
+    "Are you sure you want to close the topSpot franchise? This will close all associated stores and cannot be restored. All outstanding revenue will not be refunded.",
   );
   await page.getByRole("button", { name: "Close" }).click();
 });
