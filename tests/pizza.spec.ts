@@ -223,7 +223,7 @@ async function basicInit(page: Page) {
     }
   });
 
-  await page.goto("http://localhost:5173/");
+  await page.goto("/");
 }
 
 test("register", async ({ page }) => {
