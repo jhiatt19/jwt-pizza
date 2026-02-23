@@ -48,5 +48,6 @@ test("listUsers", async ({ page }) => {
 
   await page.getByRole("button", { name: "Login" }).click();
   await page.getByRole("link", { name: "Admin" }).click();
-  await page.getByRole("button", { name: "View Users" }).click();
+  await page.getByRole("button", { name: "List Users" }).click();
+  await expect(page.getByRole("heading")).toContainText("Users");
 });

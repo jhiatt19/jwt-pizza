@@ -87,6 +87,10 @@ class HttpPizzaService implements PizzaService {
     return Promise.resolve(user);
   }
 
+  deleteUser(user: User): Promise<null> {
+    throw new Error("Method not implemented.");
+  }
+
   logout(): void {
     this.callEndpoint("/api/auth", "DELETE");
     localStorage.removeItem("token");
@@ -104,11 +108,9 @@ class HttpPizzaService implements PizzaService {
     return Promise.resolve(result);
   }
 
-  // async getUsers(): Promise<ListUsers> {
-  //   let result: list[User] = [];
-
-  //   return Promise.resolve(result);
-  // }
+  async getUsers(): Promise<ListUsers> {
+    return this.callEndpoint("/api/user", "GET");
+  }
 
   async getMenu(): Promise<Menu> {
     return this.callEndpoint("/api/order/menu");
