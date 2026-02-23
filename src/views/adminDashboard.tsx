@@ -58,9 +58,9 @@ export default function AdminDashboard(props: Props) {
     );
   }
 
-  // async function listUsers() {
-
-  // }
+  async function listUsers() {
+    navigate("/admin-dashboard/list-users");
+  }
 
   let response = <NotFound />;
   if (Role.isRole(props.user, Role.Admin)) {
@@ -208,6 +208,11 @@ export default function AdminDashboard(props: Props) {
             className="w-36 text-xs sm:text-sm sm:w-64"
             title="Add Franchise"
             onPress={createFranchise}
+          />
+          <Button
+            title="List Users"
+            className="w-36 text-xs sm:text-sm sm:w-64"
+            onPress={listUsers}
           />
         </div>
       </View>

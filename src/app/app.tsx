@@ -25,6 +25,7 @@ import Breadcrumb from "../components/breadcrumb";
 import { pizzaService } from "../service/service";
 import { Role, User } from "../service/pizzaService";
 import "preline/preline";
+import ListUsers from "../views/listUsers";
 
 declare global {
   interface Window {
@@ -63,6 +64,12 @@ export default function App() {
 
   const navItems = [
     { title: "Home", to: "/", component: <Home />, display: [] },
+    {
+      title: "List Users",
+      to: "/admin-dashboard/list-users",
+      component: <ListUsers />,
+      display: [],
+    },
     {
       title: "Diner",
       to: "/diner-dashboard",
