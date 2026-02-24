@@ -49,5 +49,38 @@ test("listUsers", async ({ page }) => {
   await page.getByRole("button", { name: "Login" }).click();
   await page.getByRole("link", { name: "Admin" }).click();
   await page.getByRole("button", { name: "List Users" }).click();
-  await expect(page.getByRole("heading")).toContainText("Users");
+  await expect(page.getByTestId("table-testy")).toContainText("Users");
+  await expect(page.getByRole("main")).toContainText("Next Page");
+  await page.getByRole("button", { name: "Next Page" }).click();
+  await page.getByRole("button", { name: "Prev Page" }).click();
+  await expect(page.getByRole("main")).toContainText("Back");
+  await page.getByRole("button", { name: "Back" }).click();
+  await page.locator("body").press("ControlOrMeta+s");
+});
+
+test("deleteUsers", async ({ page }) => {
+  await page.goto("/");
+
+  await page.getByRole("link", { name: "Register" }).click();
+  await expect(page.getByRole("heading")).toContainText("Welcome to the party");
+  await page.getByRole("textbox", { name: "Full name" }).fill("Tester McTesty");
+  await page.getByRole("textbox", { name: "Email address" }).fill("t@jwt.com");
+  await page.getByRole("textbox", { name: "Password" }).fill("diner");
+  await page.getByRole("button", { name: "Register" }).click();
+
+  await expect(page.getByRole("link", { name: "TM" })).toBeVisible();
+  await page.getByRole("link", { name: "Logout" }).click();
+
+  await page.getByRole("link", { name: "Login" }).click();
+  await page.getByRole("textbox", { name: "Email address" }).fill("a@jwt.com");
+  await page.getByRole("textbox", { name: "Email address" }).press("Tab");
+  await page.getByRole("textbox", { name: "Password" }).fill("admin");
+  await page.getByRole("button", { name: "Login" }).click();
+  await page.getByRole("link", { name: "Admin" }).click();
+  await page.getByRole("button", { name: "List Users" }).click();
+
+  await page
+    .getByRole("row", { name: "Tester McTesty t@jwt.com diner" })
+    .getByRole("button")
+    .click();
 });

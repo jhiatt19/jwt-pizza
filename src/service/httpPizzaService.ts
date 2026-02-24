@@ -87,8 +87,8 @@ class HttpPizzaService implements PizzaService {
     return Promise.resolve(user);
   }
 
-  deleteUser(user: User): Promise<null> {
-    throw new Error("Method not implemented, I am the problem.");
+  deleteUser(user: User): Promise<void> {
+    return this.callEndpoint(`/api/user/${user.id}`, "DELETE");
   }
 
   logout(): void {

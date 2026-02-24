@@ -4,7 +4,7 @@ import { pizzaService } from "../service/service";
 import View from "./view";
 import Button from "../components/button";
 import { TrashIcon } from "../icons";
-import { ListUsers, Role } from "../service/pizzaService";
+import { ListUsers, Role, User } from "../service/pizzaService";
 
 export default function ListUsers() {
   const navigateToParent = useBreadcrumb();
@@ -28,12 +28,21 @@ export default function ListUsers() {
     };
     gettingUsers();
   }, []);
-  const currentRecords = users.users?.slice(firstIndex, lastIndex) || [];
+
+  async function deleteANDrefresh(user: User) {
+    const result = await pizzaService.deleteUser(user);
+    const refresh = await pizzaService.getUsers();
+    setUsers(refresh);
+  }
+  const currentRecords = users?.users?.slice(firstIndex, lastIndex) || [];
   const nPages = Math.ceil((users.users?.length || 0) / recordsPerPage);
   return (
     <View title="">
       <div className="max-w-xl mx-auto mt-10 p-6 bg-white border border-gray-200 shadow-sm">
-        <h2 className="text-xl font-bold mb-4 text-gray-800 text-center">
+        <h2
+          className="text-xl font-bold mb-4 text-gray-800 text-center"
+          data-testid="table-testy"
+        >
           Users
         </h2>
         <table className="w-full text-center">
@@ -64,7 +73,7 @@ export default function ListUsers() {
                   <button
                     type="button"
                     className="px-2 py-1 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-1 border-orange-400 text-orange-400  hover:border-orange-800 hover:text-orange-800"
-                    onClick={() => pizzaService.deleteUser(user)}
+                    onClick={async () => await deleteANDrefresh(user)}
                   >
                     <TrashIcon />
                   </button>
