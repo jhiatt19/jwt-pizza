@@ -88,7 +88,7 @@ class HttpPizzaService implements PizzaService {
   }
 
   deleteUser(user: User): Promise<null> {
-    throw new Error("Method not implemented.");
+    throw new Error("Method not implemented, I am the problem.");
   }
 
   logout(): void {
@@ -109,7 +109,7 @@ class HttpPizzaService implements PizzaService {
   }
 
   async getUsers(): Promise<ListUsers> {
-    return this.callEndpoint("/api/user", "GET");
+    return this.callEndpoint("/api/user");
   }
 
   async getMenu(): Promise<Menu> {
