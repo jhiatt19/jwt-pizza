@@ -80,5 +80,5 @@ jobs:
           # We use -r to copy the dist folder contents
           scp -r -i private_key \
             -o StrictHostKeyChecking=no \
-            -o "ProxyCommand=cloudflared access ssh --hostname %h" --id ${{ secrets.CF_ACCESS_CLIENT_ID }} --secret ${{ secrets.CF_ACCESS_CLIENT_SECRET }} \
+            -o "ProxyCommand=cloudflared access ssh --hostname %h --id ${{ secrets.CF_ACCESS_CLIENT_ID }} --secret ${{ secrets.CF_ACCESS_CLIENT_SECRET }}" \
             dist/* j19@j19server.jordanhiatt.org:/var/www/html/
